@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h1>Dashboard</h1>
+
+<section>
+<p>Welcome {{ request.user.username }}</p>
+
+<p>API key: <pre id="api_key">{{ api_key }}</pre></p>
+</section>
+
+<a href="{% url "logout" %}">Logout</a>
+{% endblock %}
+

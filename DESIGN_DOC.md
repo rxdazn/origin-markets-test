@@ -72,10 +72,14 @@ HTTP headers
 ## Further improvements
 
 Below is a list of features that could be implemented to further improve the
-app:  
+app:
+
 
 - Allow users to delete/regenerate API tokens. A simple security measure.
 - Add a currency library to make `Bond.currency` a text field with a `choice`
   whitelist value.  
   This was skipped as to avoid adding any extra external dependencies, but would
   be useful in a production scenario.
+- Add namespacing to URL names  
+  Currently not needed but it would be useful to have namespaces or urls to be
+  able to link/reverse view in a `'namespace:viewname'` format
