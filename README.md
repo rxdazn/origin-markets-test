@@ -1,5 +1,9 @@
 # Origin Markets Backend Test
 
+Reader user guide and design doc:
+- [user guide](USER_GUIDE.md)
+- [design doc](DESIGN_DOC.md)
+
 ### Spec:
 
 We would like you to implement an api to: ingest some data representing bonds, query an external api for some additional data, store the result, and make the resulting data queryable via api.
