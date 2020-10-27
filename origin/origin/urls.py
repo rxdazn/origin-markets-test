@@ -21,11 +21,15 @@ from users import views as users_views
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', users_views.home, name="home"),
-    path('login/',
-        auth_views.LoginView.as_view(template_name="users/login.html",
-        success_url="home"), name="login"),
-    path('logout/', auth_views.LogoutView.as_view(), name="logout"),
-    path('sign_up', users_views.sign_up, name="sign-up"),
+    path("admin/", admin.site.urls),
+    path("", users_views.home, name="home"),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(
+            template_name="users/login.html", success_url="home"
+        ),
+        name="login",
+    ),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("sign_up", users_views.sign_up, name="sign-up"),
 ]
