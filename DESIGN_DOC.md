@@ -26,11 +26,12 @@ Software versions:
 Extra external dependencies:
 
 I tried avoiding external dependencies as they should be minimised for a test
-exercise of this scope but these two were worth adding as they greatly improve
+exercise of this scope but these were worth adding as they greatly improve
 code readability.
 
 - requests==2.24.0: allows running http requests in a nice way
 - responses==0.12.0: allows mocking server responses for http calls made with `requests`
+- parameterized==0.7.4: allows [parameterizing](https://pypi.org/project/parameterized/) tests
 
 Code is formatted using [black](https://github.com/psf/black) to avoid any
 confusions or misuses when it comes to formatting.
