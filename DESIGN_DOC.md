@@ -23,6 +23,15 @@ Software versions:
 - Django 2.2.13
 - Django Rest Framework 3.9.4
 
+Extra external dependencies:
+
+I tried avoiding external dependencies as they should be minimised for a test
+exercise of this scope but these two were worth adding as they greatly improve
+code readability.
+
+- requests==2.24.0: allows running http requests in a nice way
+- responses==0.12.0: allows mocking server responses for http calls made with `requests`
+
 Code is formatted using [black](https://github.com/psf/black) to avoid any
 confusions or misuses when it comes to formatting.
 
@@ -69,17 +78,110 @@ to use an HTTP client such as CURL or Postman in order to be able to pass custom
 HTTP headers
 
 
+### Bonds
+
+Bonds (`bonds.models.Bond`) entries are saved to the database with the following assumptions:
+
+- Model:  
+```
+    isin = models.CharField(max_length=20)
+
+      The value for `isin` in README.md has a length of 12 but I increased the
+      max limit if ever some of the input test values were a bit longer.
+
+    size = models.IntegerField()
+
+      Assumed this was simply an integer as there was no floating point in
+      README.md.
+      If this was a monetary value I would have this to be a `DecimalField`
+
+    currency = models.CharField(max_length=3)
+
+      max_length == 3 as we assume ISO currency codes will be used
+
+    maturity = models.DateField()
+
+      Only contains date details down to a day granularity (no minutes, seconds etc.)
+      therefore it is a `DateField` rather than `DateTimeField`.
+      As there is no Date type in the JSON specification I am assuming the
+      requests to the API will pass `maturity` as  a string.
+      Format and correctness will be done using strptime().
+      Unsure whether maturity should allow values set in the past to I am
+      allowing this behaviour.
+
+    lei = models.CharField(max_length=40)
+
+      The value for `lei` in README.md has a length of 20 but I increased the
+      max limit if ever some of the input test values were a bit longer.
+
+      Assuming this is the ID field for `Bond` instances and no duplicate values
+      should be allowed to be written to the DB.
+
+    legal_name = models.CharField(max_length=100)
+
+      Assuming this is also a mandatory value, therefore if the name can't be
+      looked up from the external gleif.org API, the Bond entry can't be
+      created.
+
+```
+- all fields are mandatory
+
+#### Bonds LEI data external lookup (leilookup.gleif.org API)
+
+As requested in the instructions, using a Bond's LEI, its legal name is looked
+up via the gleif.org API.
+
+This adds an extra layer of complexity in terms of things to rely on;
+our API user might send a perfectly valid Bond creation request but we could
+have to generate an error if the gleif.org behaves unexpectedly.
+
+The lookup code (bonds.services.get_legal_name) could be written in a much shorter way,
+but in an effort to make the end API user friendly, I have decided to check many
+of the possible failure points in order to be able to display useful error
+messages; rather than showing a generic "Server error" or "Could not create
+bond", it is more helpful for our API user to see messages such as "LEI server lookup
+unavailable" or "LEI lookup server did not find matching record".
+This is why that function can look a bit long/complex (I think it's definitely
+worth it).
+
+##### Testing
+
+I made the tests hermetic meaning the gleif.org server isn't actually hit when
+running the tests.
+This is important to make the test suite reliable as we don't want our tests to
+fail because a service we have no control over is down.
+
+For this part all of the calls to gleif.org were mocked using
+[responses](https://github.com/getsentry/responses).  
+I tend to avoid mocking in general but this is useful to still test the expected
+behaviour from external network calls.
+
+Our tests handle a successful LEI match case, as well as the following error
+cases (from `origin.constants`):
+
+```
+ERR_LEI_LOOKUP_UNREACHABLE = "LEI lookup server unreachable"
+ERR_LEI_LOOKUP_ERROR_F = "LEI lookup server error [{status_code}]"
+ERR_LEI_LOOKUP_INVALID_JSON_RESPONSE = "LEI lookup server invalid response format"
+ERR_LEI_LOOKUP_NO_MATCH = "LEI lookup server did not find matching record"
+ERR_LEI_LOOKUP_MULTIPLE_MATCHES = "LEI lookup server found multiple matching records"
+ERR_LEI_LOOKUP_NO_LEGAL_NAME = "LEI lookup server did not return legal name data"
+```
+
 ## Further improvements
 
 Below is a list of features that could be implemented to further improve the
 app:
 
 
-- Allow users to delete/regenerate API tokens. A simple security measure.
+Code: 
 - Add a currency library to make `Bond.currency` a text field with a `choice`
   whitelist value.  
-  This was skipped as to avoid adding any extra external dependencies, but would
-  be useful in a production scenario.
+  This was skipped as to avoid adding any unnecessary extra external dependencies for
+  the scope of a small exercise, but would be useful in a production scenario.
 - Add namespacing to URL names  
   Currently not needed but it would be useful to have namespaces or urls to be
   able to link/reverse view in a `'namespace:viewname'` format
+
+User:
+- Allow users to delete/regenerate API tokens. A simple security measure.
