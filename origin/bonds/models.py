@@ -9,7 +9,7 @@ class Bond(models.Model):
     size = models.IntegerField()
     currency = models.CharField(max_length=3)
     maturity = models.DateField()
-    lei = models.CharField(max_length=40, unique=True)
+    lei = models.CharField(max_length=40)
     legal_name = models.CharField(max_length=100)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 

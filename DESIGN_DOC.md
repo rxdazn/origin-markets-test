@@ -114,9 +114,6 @@ Bonds (`bonds.models.Bond`) entries are saved to the database with the following
       The value for `lei` in README.md has a length of 20 but I increased the
       max limit if ever some of the input test values were a bit longer.
 
-      Assuming this is the ID field for `Bond` instances and no duplicate values
-      should be allowed to be written to the DB.
-
     legal_name = models.CharField(max_length=100)
 
       Assuming this is also a mandatory value, therefore if the name can't be
