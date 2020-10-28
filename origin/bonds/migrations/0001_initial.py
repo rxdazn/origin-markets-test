@@ -7,20 +7,27 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Bond',
+            name="Bond",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('isin', models.CharField(max_length=20)),
-                ('size', models.IntegerField()),
-                ('currency', models.CharField(max_length=3)),
-                ('maturity', models.DateField()),
-                ('lei', models.CharField(max_length=40, unique=True)),
-                ('legal_name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("isin", models.CharField(max_length=20)),
+                ("size", models.IntegerField()),
+                ("currency", models.CharField(max_length=3)),
+                ("maturity", models.DateField()),
+                ("lei", models.CharField(max_length=40, unique=True)),
+                ("legal_name", models.CharField(max_length=100)),
             ],
         ),
     ]

@@ -8,8 +8,8 @@ from origin import constants
 from bonds.tests.utilities import ResponsesMixin, mock_lei_lookup_response
 from bonds.services import get_legal_name, LEILookupError
 
-class TestLegalNameService(ResponsesMixin, TestCase):
 
+class TestLegalNameService(ResponsesMixin, TestCase):
     def test_lookup_success(self):
         server_response_dict = [
             {
