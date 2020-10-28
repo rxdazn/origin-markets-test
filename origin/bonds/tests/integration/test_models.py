@@ -10,7 +10,12 @@ from bonds.tests.utilities import ResponsesMixin, mock_lei_lookup_response
 
 
 class TestBondLegalName(ResponsesMixin, TestCase):
-    """Ensures Bond.legal_name is set automatically when the model is saved"""
+    """
+    Ensures Bond.legal_name is set automatically when the model is saved
+
+    These are considered integration tests as they require database writes.
+    They could be unit tests if we didn't fetch legal_name on Bond.save()
+    """
 
     def setUp(self):
         super().setUp()
