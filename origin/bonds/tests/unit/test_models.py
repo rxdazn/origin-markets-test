@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 import responses
 from unittest import mock
 
@@ -11,6 +12,14 @@ from bonds.tests.utilities import ResponsesMixin, mock_lei_lookup_response
 class TestBondLegalName(ResponsesMixin, TestCase):
     """Ensures Bond.legal_name is set automatically when the model is saved"""
 
+    def setUp(self):
+        super().setUp()
+        self.user = get_user_model().objects.create_user(username="rob")
+
+    def tearDown(self):
+        super().tearDown()
+        self.user.delete()
+
     @mock.patch("bonds.models.get_legal_name")
     def test_legal_name_set(self, get_legal_name_mock):
         get_legal_name_mock.return_value = "BNP PARIBAS"
@@ -20,6 +29,7 @@ class TestBondLegalName(ResponsesMixin, TestCase):
             currency="EUR",
             maturity=date.today(),
             lei="R0MUWSFPU8MPRO8K5P83",
+            user=self.user,
         )
 
         get_legal_name_mock.assert_called_once()
@@ -34,6 +44,7 @@ class TestBondLegalName(ResponsesMixin, TestCase):
             currency="EUR",
             maturity=date.today(),
             lei="R0MUWSFPU8MPRO8K5P83",
+            user=self.user,
         )
 
         get_legal_name_mock.assert_called_once()
