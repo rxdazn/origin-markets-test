@@ -30,5 +30,8 @@ class BondViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request):
-        serializer = BondSerializer(Bond.objects.filter(user=request.user), many=True)
+        filters = {"user": request.user}
+        if "legal_name" in request.query_params:
+            filters.update({"legal_name__exact": request.query_params["legal_name"]})
+        serializer = BondSerializer(Bond.objects.filter(**filters), many=True)
         return Response(serializer.data)

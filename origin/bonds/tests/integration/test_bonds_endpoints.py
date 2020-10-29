@@ -163,8 +163,29 @@ class TestListBonds(APITestCase):
         response_json = response.json()
 
         self.assertEquals(len(response_json), 2)
-        self.assertEquals(response_json[0]['legal_name'], 'BNP PARIBAS')
-        self.assertEquals(response_json[1]['legal_name'], 'BNP PARIBAS 2')
+        self.assertEquals(response_json[0]["legal_name"], "BNP PARIBAS")
+        self.assertEquals(response_json[1]["legal_name"], "BNP PARIBAS 2")
+
+    @mock.patch("bonds.models.get_legal_name")
+    def test_list_filter_exact_legal_name(self, lei_lookup_mock):
+        """Ensures `legal_name` query parameter is supported and returns strict exact matches only"""
+        lei_lookup_mock.return_value = "BNP"
+        self.client.post("/bonds/", self.bond_data, format="json")
+
+        lei_lookup_mock.return_value = "BNP3"
+        self.client.post("/bonds/", self.bond_data, format="json")
+
+        response = self.client.get("/bonds/?legal_name=NOTHING_MATCHING")
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(len(response.json()), 0)
+
+        response = self.client.get("/bonds/?legal_name=BNP")
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(len(response.json()), 1)
+
+        response = self.client.get("/bonds/?legal_name=BNP3")
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(len(response.json()), 1)
 
     @mock.patch("bonds.models.get_legal_name")
     def test_list_only_user_created_entries(self, lei_lookup_mock):
