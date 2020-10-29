@@ -138,7 +138,6 @@ class TestListBonds(APITestCase):
             response.json(),
             [
                 {
-                    "id": 1,
                     "legal_name": "BNP PARIBAS",
                     "maturity": "2025-03-27",
                     "currency": "EUR",

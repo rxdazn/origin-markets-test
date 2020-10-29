@@ -11,4 +11,4 @@ class BondSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bond
-        exclude = ["user"]
+        exclude = ["user", "id"]

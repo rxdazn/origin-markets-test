@@ -183,6 +183,9 @@ The payload and response formats also strictly match README.md, meaning some
 features such as pagination are not possible, as they would modify the response
 format by including metadata fields.
 
+This also means no extra relevant fields are returned, for example the bonds
+unique IDs `Bond.pk` are not returned.
+
 The decision to strictly adhere to the formats described in README.md was made
 to support the case where the reviewer of this assignment would have a test
 suite ready to run against the app.
