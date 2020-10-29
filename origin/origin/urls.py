@@ -15,14 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, include
 
 from users import views as users_views
+from bonds.urls import router as bonds_router
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", users_views.home, name="home"),
+    path("", include("bonds.urls")),
     path(
         "login/",
         auth_views.LoginView.as_view(

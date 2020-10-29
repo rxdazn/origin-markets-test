@@ -65,11 +65,6 @@ class TestBondSerializer(TestCase):
         serializer = BondSerializer(data=self.data)
         self.assertFalse(serializer.is_valid())
 
-    def test_legal_name_required(self):
-        self.data["legal_name"] = ""
-        serializer = BondSerializer(data=self.data)
-        self.assertFalse(serializer.is_valid())
-
     def test_lei_required(self):
         self.data["lei"] = ""
         serializer = BondSerializer(data=self.data)

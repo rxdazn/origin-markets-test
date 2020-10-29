@@ -73,16 +73,18 @@ Users can see their API keys after logging in via `localhost:8080/login`.
 
 By default `TokenAuthentication` expects tokens to be passed via the
 `Authorization` HTTP header, but for usability sake in this test exercise the
-token will instead be passed as a query parameter named `key`.
+token will also be allowed to be passed as a query parameter named `api_key`.
 This is done to allow fetching the API via a browser window rather than having
 to use an HTTP client such as CURL or Postman in order to be able to pass custom
-HTTP headers
+HTTP headers.
 
 
 ### Bonds
 
 Bonds (`bonds.models.Bond`) entries are saved to the database with the following assumptions:
 
+- all fields are mandatory
+- none of the user-input fields seem to be serving as unique identifiers
 - Model:  
 ```
     isin = models.CharField(max_length=20)
@@ -122,7 +124,6 @@ Bonds (`bonds.models.Bond`) entries are saved to the database with the following
       created.
 
 ```
-- all fields are mandatory
 
 #### Bonds LEI data external lookup (leilookup.gleif.org API)
 
@@ -142,7 +143,7 @@ unavailable" or "LEI lookup server did not find matching record".
 This is why that function can look a bit long/complex (I think it's definitely
 worth it).
 
-##### Testing
+##### LEI Lookup testing
 
 I made the tests hermetic meaning the gleif.org server isn't actually hit when
 running the tests.
@@ -166,6 +167,26 @@ ERR_LEI_LOOKUP_MULTIPLE_MATCHES = "LEI lookup server found multiple matching rec
 ERR_LEI_LOOKUP_NO_LEGAL_NAME = "LEI lookup server did not return legal name data"
 ```
 
+## API
+
+The built API strictly only implements the endpoints described in README.md:
+
+- POST /bonds/: to create a Bond
+- GET /bonds/: to list a user's bonds, with an optional `legal_name` query
+  parameter that filters Bonds with matching legal name values.
+  I am assuming the `legal_name` is for exact strict matches.
+
+This means no other verbs are supported; updating an entry is not possible
+(as semantically we should be using the verb PUT), and fetching a single
+entry is not possible either.
+The payload and response formats also strictly match README.md, meaning some
+features such as pagination are not possible, as they would modify the response
+format by including metadata fields.
+
+The decision to strictly adhere to the formats described in README.md was made
+to support the case where the reviewer of this assignment would have a test
+suite ready to run against the app.
+
 ## Further improvements
 
 Below is a list of features that could be implemented to further improve the
@@ -183,3 +204,11 @@ Code:
 
 User:
 - Allow users to delete/regenerate API tokens. A simple security measure.
+
+API:
+- Add support for pagination. Not done in this version as to not divert from the
+  format described in README.md
+  Essential feature to support large collections without hammering the server
+  while keeping decent server response times.
+- Add rate limiting, to ensure decent server response time
+- Add caching, to not always query the database, especially for GET endpoints
